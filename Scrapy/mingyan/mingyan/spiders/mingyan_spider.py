@@ -4,9 +4,7 @@ import scrapy
 class mingyan(scrapy.Spider):
 
     name = "mingyan"
-    start_urls = [
-        'http://lab.scrapyd.cn',
-    ]
+    start_urls = ['http://lab.scrapyd.cn']
     def parse(self,response):
         mingyan = response.css('div.quote')
         for item in mingyan:
