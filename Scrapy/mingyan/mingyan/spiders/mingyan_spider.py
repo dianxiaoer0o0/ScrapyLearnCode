@@ -9,8 +9,15 @@ class mingyan(scrapy.Spider):
         'http://lab.scrapyd.cn/page/2/',
     ]
     def parse(self,response):
-        page = response.url.split("/")[-2]
-        filename = "mingyan-%s.html" % page
-        with open(filename,'wb') as f:
-            f.write(response.body)
-            self.log('保存文件: %s' % filename)
+        mingyan = response.css('div.quote')[0]
+
+        text = mingyan.css('.text::text').extract_first()
+        author = mingyan.css('.author::text').extract()
+        tags = mingyan.css('.tags .tag::text').extract()[0:2]
+        tags = ",".join(tags)
+
+        fileName = '%s-语录.txt' % author
+        with open(fileName,'w') as f:
+            f.write(text)
+            f.write('\n')
+            f.write('标签：' + tags)
