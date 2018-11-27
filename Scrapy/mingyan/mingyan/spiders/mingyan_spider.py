@@ -12,7 +12,6 @@ class mingyan(scrapy.Spider):
             author = item.css('.author::text').extract()
             tags = item.css('.tags .tag::text').extract()
             tags = ",".join(tags)
-
             fileName = '%s-语录.txt' % author[0]
             with open(fileName,'a+') as f:
                 f.write(text)
