@@ -21,4 +21,6 @@ class Doubanmovietop250Item(scrapy.Item):
     # 电影经典语句
     quote = scrapy.Field()
     # 电影图片链接
-    image_url = scrapy.Field()
+    img_url = scrapy.Field()
+    # 电影图片本地路径
+    localPath = scrapy.Field()
