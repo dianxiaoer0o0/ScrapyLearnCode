@@ -1,6 +1,5 @@
 #encoding:utf-8
 import scrapy
-
 class mingyan(scrapy.Spider):
 
     name = "mingyan"
