@@ -31,8 +31,9 @@ class Doubanmovietop250Pipeline(object):
         if not os.path.exists(settings.IMAGE_DIR):
             os.mkdir(settings.IMAGE_DIR)
         if img:
-            with open(localPath,'wb') as f:
-                f.write(img.read())
+            pass
+            # with open(localPath,'wb') as f:
+            #     f.write(img.read())
         else:
             localPath = ''
         return localPath
@@ -46,20 +47,26 @@ class Doubanmovietop250Pipeline(object):
             if self.cur.fetchone():
                 pass
             else:
-                sql = """insert into movietop250(name, info, rating, num, quote, img_url,localPath)
-                                    value (%s, %s, %s, %s, %s, %s, %s)"""
+                sql = """insert into movietop250
+                                    value (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
                 movieInfo = (item['name'],
-                            item['info'],
-                            item['rating'],
-                            item['num'],
-                            item['quote'],
-                            item['img_url'],
-                            item['localPath'])
+                             item['rating'],
+                             item['num'],
+                             item['quote'],
+                             item['director'],
+                             item['actors'],
+                             item['year'],
+                             item['country'],
+                             item['types'],
+                             item['img_url'],
+                             item['localPath'])
                 res = self.cur.execute(sql,movieInfo)
                 if res:
                     self.conn.commit()
+                    print("成功写入")
                 else:
                     self.conn.rollback()
+                    print("写入失败")
         except Exception as e:
             print(e)
         return item

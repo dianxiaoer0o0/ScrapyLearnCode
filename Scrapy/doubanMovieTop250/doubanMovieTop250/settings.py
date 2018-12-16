@@ -27,7 +27,7 @@ USER_AGENT = 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:45.0) Gecko/20100101 Firefo
 IMAGE_DIR = r'd:\\豆瓣电影Top250\\'
 
 #日志等级设置
-LOG_LEVEL = 'ERROR'
+#LOG_LEVEL = 'DEBUG'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'doubanMovieTop250 (+http://www.yourdomain.com)'
