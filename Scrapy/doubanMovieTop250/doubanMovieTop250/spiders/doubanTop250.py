@@ -67,11 +67,12 @@ class doubanMovie(scrapy.Spider):
 
     def info_parse(self,response):
         item = response.meta['item']
-        item['director'] = response.xpath('//a[@rel="v:directedBy"]/text()').extract()
-        item['actors'] = response.xpath('//a[@rel="v:starring"]/text()').extract()
+        item['director'] = response.xpath('//a[@rel="v:directedBy"]/text()').extract()[0]
+        print(item['director'])
+        item['actors'] = response.xpath('//a[@rel="v:starring"]/text()').extract()[0]
         item['types'] = response.xpath('//span[@property="v:genre"]/text()')
         item['country'] = re.search(r'制片国家/地区:</span>(.+?)<br/>',response.text).group()[16:-5].strip()
-        item['year'] = response.xpath('//span[@property="v:initialReleaseDate"]/text()').extract()
+        item['year'] = response.xpath('//span[@property="v:initialReleaseDate"]/text()').extract()[0]
         yield item
 
 
