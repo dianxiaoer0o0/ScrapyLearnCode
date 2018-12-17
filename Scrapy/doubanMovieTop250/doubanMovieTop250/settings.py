@@ -23,6 +23,15 @@ MYSQL_PASSWD = 'root'
 #请求头
 USER_AGENT = 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0'
 
+#代理IP池
+PROXIES = [
+   'HTTP://61.135.217.7:80',
+   'HTTP://27.42.168.46:48919',
+   'HTTP://183.159.85.120:18118',
+   'HTTP://125.105.62.17:8118',
+   'HTTP://113.116.178.58:808',
+]
+
 # 图片存储路径
 IMAGE_DIR = r'd:\\豆瓣电影Top250\\'
 
@@ -66,10 +75,6 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'doubanMovieTop250.middlewares.Doubanmovietop250DownloaderMiddleware': 543,
-#}
-
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
 #EXTENSIONS = {

@@ -15,7 +15,7 @@ class doubanMovie(scrapy.Spider):
 
     def parse(self, response):
 
-        #print(response.body)
+        print(response.body)
         selector = scrapy.Selector(response)
         movies = selector.xpath('//div[@class = "item"]')
         item = items.Doubanmovietop250Item()
@@ -70,7 +70,7 @@ class doubanMovie(scrapy.Spider):
         item['director'] = response.xpath('//a[@rel="v:directedBy"]/text()').extract()[0]
         print(item['director'])
         item['actors'] = response.xpath('//a[@rel="v:starring"]/text()').extract()[0]
-        item['types'] = response.xpath('//span[@property="v:genre"]/text()')
+        item['types'] = response.xpath('//span[@property="v:genre"]/text()').extract()[0]
         item['country'] = re.search(r'制片国家/地区:</span>(.+?)<br/>',response.text).group()[16:-5].strip()
         item['year'] = response.xpath('//span[@property="v:initialReleaseDate"]/text()').extract()[0]
         yield item

@@ -4,9 +4,9 @@
 #
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
-
+import scrapy
 from scrapy import signals
-
+import random
 
 class Doubanmovietop250SpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -101,3 +101,12 @@ class Doubanmovietop250DownloaderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+class ProxyMiddleware(object):
+    def __init__(self,ip):
+        self.ip = ip
+    @classmethod
+    def from_crawler(cls,crawler):
+        return cls(ip=crawler.settings.get('PROXIES'))
+    def process_request(self,request,spider):
+        ip = random.choice(self.ip)
+        request.meta['proxy'] = ip
