@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import random
 # Scrapy settings for doubanMovieTop250 project
 #
 # For simplicity, this file contains only settings considered important or
@@ -24,25 +24,34 @@ MYSQL_PASSWD = 'root'
 USER_AGENT = 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0'
 
 #代理IP池
-PROXIES = [
-   'HTTP://61.135.217.7:80',
-   'HTTP://27.42.168.46:48919',
-   'HTTP://183.159.85.120:18118',
-   'HTTP://125.105.62.17:8118',
-   'HTTP://113.116.178.58:808',
-]
+# PROXIES = [
+#    'HTTP://61.135.217.7:80',
+#    'HTTP://27.42.168.46:48919',
+#    'HTTP://183.159.85.120:18118',
+#    'HTTP://125.105.62.17:8118',
+#    'HTTP://113.116.178.58:808',
+# ]
 
 # 图片存储路径
 IMAGE_DIR = r'd:\\豆瓣电影Top250\\'
 
 #日志等级设置
-#LOG_LEVEL = 'DEBUG'
+LOG_LEVEL = 'ERROR'
 
+#超时限制
+#DOWNLOAD_TIMEOUT=6
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'doubanMovieTop250 (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
+
+#禁用cookies
+COOKIES_ENABLE = False
+
+#下载延时
+#DOWNLOAD_DELAY = random.randint(1,5)
+#
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -75,6 +84,13 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
+DOWNLOADER_MIDDLEWARES = {
+#    'myproxies.middlewares.MyCustomDownloaderMiddleware': 543,
+     #'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware':None,
+     'doubanMovieTop250.middlewares.ProxyMiddleware':125,
+     #'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware':None
+}
+
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
 #EXTENSIONS = {

@@ -22,7 +22,7 @@ class Doubanmovietop250Pipeline(object):
         except Exception as e:
             print(e)
         else:
-            print('数据库连接成功！')
+            #print('数据库连接成功！')
             self.cur = self.conn.cursor()
     #下载图片并保存，返回保存路径
     def download_img(self,name,url):
@@ -31,7 +31,7 @@ class Doubanmovietop250Pipeline(object):
         if not os.path.exists(settings.IMAGE_DIR):
             os.mkdir(settings.IMAGE_DIR)
         if img:
-            pass
+            pass    #测试通过，暂时不启用
             # with open(localPath,'wb') as f:
             #     f.write(img.read())
         else:
@@ -45,11 +45,13 @@ class Doubanmovietop250Pipeline(object):
                 item['img_url']
             )
             if self.cur.fetchone():
-                pass
+                print("%s--已在数据库中"%item['name'])
             else:
+                #print("开始写入.......")
                 sql = """insert into movietop250
-                                    value (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-                movieInfo = (item['name'],
+                                    value (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+                movieInfo = (item['ranking'],
+                             item['name'],
                              item['rating'],
                              item['num'],
                              item['quote'],
@@ -59,14 +61,15 @@ class Doubanmovietop250Pipeline(object):
                              item['country'],
                              item['types'],
                              item['img_url'],
-                             item['localPath'])
+                             item['localPath'],
+                             item['IMDB_url'])
                 res = self.cur.execute(sql,movieInfo)
                 if res:
                     self.conn.commit()
-                    print("成功写入")
+                    print("%s---成功写入"%item['name'])
                 else:
                     self.conn.rollback()
-                    print("写入失败")
+                    print("%s---写入失败"%item['name'])
         except Exception as e:
             print(e)
         return item

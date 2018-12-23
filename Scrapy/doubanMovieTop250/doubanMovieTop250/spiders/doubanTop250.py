@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import re
-from scrapy.loader import ItemLoader
+import copy
 from doubanMovieTop250 import items
+import mysqlMethod
+import time
+import random
 
 #爬取豆瓣电影TOP250的信息
 class doubanMovie(scrapy.Spider):
@@ -15,22 +18,21 @@ class doubanMovie(scrapy.Spider):
 
     def parse(self, response):
 
-        print(response.body)
+        #print(response.body)
         selector = scrapy.Selector(response)
         movies = selector.xpath('//div[@class = "item"]')
         item = items.Doubanmovietop250Item()
-
+        movieSql =  mysqlMethod.mainMethod()
+        movie_list = movieSql.get_movieList()
         for movie in movies:
             #提取电影名字
             titles =movie.xpath('.//span[@class = "title"]/text()').extract()
             name = ''
             for title in titles:
                 name += title.strip()
+            item['ranking'] = int(movie.xpath('.//em/text()').extract()[0])
             item['name'] = name
-            #提取电影详情页链接
-            info_url = movie.xpath('.//div[@class="hd"]/a/@href').extract()[0]
-            #提取电影详情
-            yield scrapy.Request(info_url,meta={'item':item},callback=self.info_parse,dont_filter=True)
+
             # #提取电影介绍
             # infos = movie.xpath('.//div[@class = "bd"]/p/text()').extract()
             # fullInfo = ''
@@ -56,8 +58,11 @@ class doubanMovie(scrapy.Spider):
             item['quote'] = quote
             #提取电影封面url
             item['img_url'] = movie.xpath('.//img/@src').extract()[0]
-            #返回item
-            yield item
+            #提取电影详情页链接
+            info_url = movie.xpath('.//div[@class="hd"]/a/@href').extract()[0]
+            #提取电影详情
+            if item['name'] not in movie_list:
+                yield scrapy.Request(info_url,meta={'item':copy.deepcopy(item)},callback=self.info_parse,dont_filter=True)
 
         #提取下一页
         nextPage = selector.xpath('.//span[@class = "next"]/a/@href').extract()
@@ -68,11 +73,12 @@ class doubanMovie(scrapy.Spider):
     def info_parse(self,response):
         item = response.meta['item']
         item['director'] = response.xpath('//a[@rel="v:directedBy"]/text()').extract()[0]
-        print(item['director'])
-        item['actors'] = response.xpath('//a[@rel="v:starring"]/text()').extract()[0]
-        item['types'] = response.xpath('//span[@property="v:genre"]/text()').extract()[0]
+        #print(item['director'])
+        item['actors'] = '/'.join(response.xpath('//a[@rel="v:starring"]/text()').extract())
+        item['types'] = '/'.join(response.xpath('//span[@property="v:genre"]/text()').extract())
         item['country'] = re.search(r'制片国家/地区:</span>(.+?)<br/>',response.text).group()[16:-5].strip()
-        item['year'] = response.xpath('//span[@property="v:initialReleaseDate"]/text()').extract()[0]
+        item['year'] = '/'.join(response.xpath('//span[@property="v:initialReleaseDate"]/text()').extract())
+        item['IMDB_url'] = re.search(r'http://www.imdb.com(.+?)"',response.text).group()[:-2]
         yield item
 
 

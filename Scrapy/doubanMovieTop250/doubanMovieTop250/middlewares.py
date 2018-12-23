@@ -7,6 +7,7 @@
 import scrapy
 from scrapy import signals
 import random
+import mysqlMethod
 
 class Doubanmovietop250SpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -102,11 +103,30 @@ class Doubanmovietop250DownloaderMiddleware(object):
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
 class ProxyMiddleware(object):
-    def __init__(self,ip):
-        self.ip = ip
-    @classmethod
-    def from_crawler(cls,crawler):
-        return cls(ip=crawler.settings.get('PROXIES'))
     def process_request(self,request,spider):
-        ip = random.choice(self.ip)
-        request.meta['proxy'] = ip
+        proxy = self.get_random_proxy()
+        #print("本次代理IP为："+proxy)
+        request.meta['proxy'] = proxy
+
+    def process_response(self,request,response,spider):
+        if response.status != 200:
+            print('response_status is : '%response.status)
+            a = mysqlMethod.mainMethod()
+            a.dropIP(request.meta['proxy'])
+            proxy = self.get_random_proxy()
+            #print("当前代理IP为："+proxy)
+            request.meta['proxy'] = proxy
+            return request
+        return response
+
+    def get_random_proxy(self):
+        a = mysqlMethod.mainMethod()
+        sql = 'select count(*) from proxies'
+        count = a.execute(sql)
+        #print(count)
+        x = random.randint(1,count)
+        sql= 'select proxy from proxies where id = %d'%x
+        while True:
+            proxy = a.execute(sql)
+            a.close()
+            return  proxy

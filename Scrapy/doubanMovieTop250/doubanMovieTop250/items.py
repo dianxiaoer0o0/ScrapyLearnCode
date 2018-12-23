@@ -10,6 +10,9 @@ import scrapy
 
 class Doubanmovietop250Item(scrapy.Item):
     # define the fields for your item here like:
+
+    #电影排名
+    ranking = scrapy.Field()
     # 电影名
     name = scrapy.Field()
     ## 电影信息
@@ -34,3 +37,5 @@ class Doubanmovietop250Item(scrapy.Item):
     country = scrapy.Field()
     # 电影类型
     types = scrapy.Field()
+    # IMDB链接
+    IMDB_url = scrapy.Field()
