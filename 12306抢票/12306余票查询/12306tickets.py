@@ -12,7 +12,6 @@ class queryTickets():
         self.from_station = self.station_name_to_codes[from_station]
         self.to_station =self.station_name_to_codes[to_station]
         self.purpose_codes = purpose_codes
-
     def query_url(self):
         url_head = 'https://kyfw.12306.cn/otn/leftTicket/queryA?'
         url_train_date = 'leftTicketDTO.train_date={}'.format(self.train_date)
@@ -61,17 +60,35 @@ class queryTickets():
             return tickets_infos
         else:
             print("！！！无余票信息！！！")
-    def show_tickets_infos(self,train_type='a'):
-        tickets_infos = self.query_tickets()
+    def query_bookable_tickets(self):
+        all_trains = self.query_tickets()
+        for train in all_trains[:]:
+            if train['可预订'] == 'N':
+                all_trains.remove(train)
+        return all_trains
+    def show_tickets_infos(self,train_type='a',only_bookable=False):
+        if only_bookable:
+            tickets_infos = self.query_bookable_tickets()
+            from termcolor import colored
+            print(colored('%s-->%s     %s     有票车次信息：'%
+                    (
+                        self.station_codes_to_name[self.from_station],
+                        self.station_codes_to_name[self.to_station],
+                        self.train_date
+                    )
+                )   
+                )
+        else: 
+            tickets_infos = self.query_tickets()
         import prettytable as pt
         tb = pt.PrettyTable()
         tb.field_names = tickets_infos[0].keys()
-        #print('{:>5}{:^5}{:^5}{:^5}{:^8}{:^8}{:^8}{:^8}{:^8}{:^8}{:^8}{:^8}{:^8}{:^8}{:^8}{:^8}{:^8}'.format(*tickets_infos[0].keys()))
         for info in tickets_infos:
             if info['车次'][0] in train_type or train_type == 'a':
                 tb.add_row(info.values())
-            #print('{车次:>5}{出发站:^5}{到达站:^5}{出发时间:^5}'.format(**info),chr(12288))
         print(tb)
 if __name__ == '__main__':
-    query1 = queryTickets(train_date='2019-01-22',from_station='梁平')
-    query1.show_tickets_infos()
+    query1 = queryTickets(train_date='2019-01-22',from_station='杭州')
+    query1.show_tickets_infos(only_bookable=True)
+    query2 = queryTickets(train_date='2019-01-22',from_station='福州')
+    query2.show_tickets_infos(only_bookable=True)
